@@ -6,7 +6,7 @@ class Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
         child: Text(
           heading,
           style: TextStyle(fontSize: 24),
