@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../widgets/header.dart';
 import '../widgets/paragraph.dart';
+import '../widgets/itemForm.dart';
 
 class AddItemPage extends StatefulWidget {
-  AddItemPage({Key key, this.title}) : super(key: key);
+  AddItemPage({Key key, this.title, this.saveItem}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -16,18 +17,16 @@ class AddItemPage extends StatefulWidget {
   // always marked "final".
 
   final String title;
+  final void Function(String category, String barcode, String name,
+      String units, String uom, String price) saveItem;
 
   @override
   _AddItemPageState createState() => _AddItemPageState();
 }
 
 class _AddItemPageState extends State<AddItemPage> {
-  void _showAddItemManualPage() {
-    Navigator.of(context).pushNamed('/add/manual');
-  }
-
-  void _showAddItemBarcodePage() {
-    Navigator.of(context).pushNamed('/add/scan');
+  void _scanItem() {
+    // use package here to scan and store barcode
   }
 
   @override
@@ -38,17 +37,16 @@ class _AddItemPageState extends State<AddItemPage> {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Header("Make a manual entry?"),
-            ElevatedButton(
-              onPressed: _showAddItemManualPage,
-              child: Text("Let's go!"),
-            ),
             Header('Scan a barcode'),
             ElevatedButton(
-              onPressed: _showAddItemBarcodePage,
+              onPressed: _scanItem,
               child: Text("Let's go!"),
+            ),
+            Header("Item Details"),
+            ItemForm(
+              saveItem: widget.saveItem,
             ),
           ],
         ),

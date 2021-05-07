@@ -5,8 +5,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'src/pages/home.dart';
 import 'src/pages/addItem.dart';
-import 'package:cheapee/src/pages/addItemManual.dart';
-import 'package:cheapee/src/pages/addItemBarcode.dart';
 
 void main() {
   runApp(
@@ -37,11 +35,12 @@ class App extends StatelessWidget {
         ),
         routes: {
           '/': (context) => HomePage(title: 'Cheapee'),
-          '/add': (context) => AddItemPage(title: 'Add item'),
-          '/add/manual': (context) =>
-              AddItemManualPage(title: 'Add item manually'),
-          '/add/scan': (context) =>
-              AddItemBarcodePage(title: 'Add item manually'),
+          '/add': (context) => Consumer<ApplicationState>(
+                builder: (context, appState, _) => AddItemPage(
+                  title: 'Add item',
+                  saveItem: appState.saveItem,
+                ),
+              ),
         });
   }
 }
@@ -55,9 +54,25 @@ class ApplicationState extends ChangeNotifier {
     await Firebase.initializeApp();
 
     // fetch ListItems from the store
+  }
 
-    // getters and setters
+  // getters and setters
 
-    // methods
+  // methods
+  Future<DocumentReference> saveItem(String category, String barcode,
+      String name, String units, String uom, String price) {
+    // TODO checks shouldn't be needed because form verfies everything?
+    // TODO Separate check for existing elements
+    // calculate R per UoM (rpu)
+    return FirebaseFirestore.instance.collection(category).add({
+      'barcode': barcode,
+      'name': name,
+      'units': units,
+      'uom': uom,
+      'price': price,
+      'rpu': 0.0,
+    }).then((value) {
+      print('Item added');
+    }).catchError((error) => print('Failed to add item: $error'));
   }
 }
