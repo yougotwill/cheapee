@@ -19,8 +19,8 @@ class ItemFormState extends State<ItemForm> {
   // not a GlobalKey<MyCustomFormState>.
   final _formKey = GlobalKey<FormState>();
 
-  String categoryValue;
-  String uomValue;
+  String categoryValue = 'cheese';
+  String uomValue = 'g';
 
   final textBarcodeController = TextEditingController();
   final textNameController = TextEditingController();
