@@ -1,8 +1,9 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 
 class ItemForm extends StatefulWidget {
-  ItemForm({this.saveItem});
-  final void Function(String category, String barcode, String name,
+  ItemForm({required this.saveItem});
+  final FutureOr<void> Function(String category, String barcode, String name,
       String units, String uom, String price) saveItem;
 
   @override
@@ -17,10 +18,13 @@ class ItemFormState extends State<ItemForm> {
   //
   // Note: This is a `GlobalKey<FormState>`,
   // not a GlobalKey<MyCustomFormState>.
-  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   String categoryValue = 'cheese';
   String uomValue = 'g';
+
+  // TODO make map of <category, uom> which will change
+  // the default value of uom on category value changing
 
   final textBarcodeController = TextEditingController();
   final textNameController = TextEditingController();
@@ -81,9 +85,9 @@ class ItemFormState extends State<ItemForm> {
                   child: Text('Meat'),
                 ),
               ],
-              onChanged: (value) async {
+              onChanged: (String? value) async {
                 setState(() {
-                  categoryValue = value;
+                  categoryValue = value!;
                 });
               },
               value: categoryValue,
@@ -143,9 +147,9 @@ class ItemFormState extends State<ItemForm> {
                   child: Text('each'),
                 ),
               ],
-              onChanged: (value) async {
+              onChanged: (String? value) async {
                 setState(() {
-                  uomValue = value;
+                  uomValue = value!;
                 });
               },
               value: uomValue,
@@ -162,14 +166,17 @@ class ItemFormState extends State<ItemForm> {
                 if (value == null || value.isEmpty) {
                   return 'Cannot be empty';
                 }
+                if (!RegExp(r'^\d*\.?\d+$').hasMatch(value)) {
+                  return 'Only decimals are valid';
+                }
                 return null;
               },
             ),
           ),
           ElevatedButton(
-            onPressed: () {
-              if (_formKey.currentState.validate()) {
-                widget.saveItem(
+            onPressed: () async {
+              if (_formKey.currentState!.validate()) {
+                await widget.saveItem(
                     categoryValue,
                     textBarcodeController.text,
                     textNameController.text,

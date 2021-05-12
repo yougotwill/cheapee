@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:cheapee/src/widgets/itemList.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -5,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'src/pages/home.dart';
 import 'src/pages/addItem.dart';
+import 'src/widgets/itemList.dart' show Item;
 
 void main() {
   runApp(
@@ -34,7 +38,10 @@ class App extends StatelessWidget {
           primarySwatch: Colors.indigo,
         ),
         routes: {
-          '/': (context) => HomePage(title: 'Cheapee'),
+          '/': (context) => Consumer<ApplicationState>(
+                builder: (context, appState, _) =>
+                    HomePage(title: 'Cheapee', items: appState.items),
+              ),
           '/add': (context) => Consumer<ApplicationState>(
                 builder: (context, appState, _) => AddItemPage(
                   title: 'Add item',
@@ -54,9 +61,31 @@ class ApplicationState extends ChangeNotifier {
     await Firebase.initializeApp();
 
     // fetch ListItems from the store
+    _itemsSubscription = FirebaseFirestore.instance
+        .collection('meat')
+        .snapshots()
+        .listen((snapshot) {
+      _items = [];
+      snapshot.docs.forEach((document) {
+        print('doc ${document.data()}');
+        _items.add(Item(
+          category: 'meat',
+          barcode: document.data()['barcode'],
+          name: document.data()['name'],
+          units: document.data()['units'],
+          uom: document.data()['uom'],
+          price: document.data()['price'],
+          rpu: document.data()['rpu'],
+        ));
+      });
+      notifyListeners();
+    });
   }
 
   // getters and setters
+  StreamSubscription<QuerySnapshot>? _itemsSubscription;
+  List<Item> _items = [];
+  List<Item> get items => _items;
 
   // methods
   Future<DocumentReference> saveItem(String category, String barcode,
@@ -70,9 +99,7 @@ class ApplicationState extends ChangeNotifier {
       'units': units,
       'uom': uom,
       'price': price,
-      'rpu': 0.0,
-    }).then((value) {
-      print('Item added');
-    }).catchError((error) => print('Failed to add item: $error'));
+      'rpu': '0.0',
+    });
   }
 }

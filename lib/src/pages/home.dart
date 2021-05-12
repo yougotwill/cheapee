@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../widgets/header.dart';
 import '../widgets/paragraph.dart';
+import '../widgets/itemList.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key key, this.title}) : super(key: key);
+  HomePage({Key? key, required this.title, required this.items})
+      : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -16,6 +18,7 @@ class HomePage extends StatefulWidget {
   // always marked "final".
 
   final String title;
+  final List<Item> items;
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -61,6 +64,7 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Header("Let's get the best deal!"),
+            ItemList(items: widget.items),
             Paragraph(
               'Add some items by tapping the button below.',
             ),
