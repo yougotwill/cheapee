@@ -62,14 +62,13 @@ class ApplicationState extends ChangeNotifier {
 
     // fetch ListItems from the store
     _itemsSubscription = FirebaseFirestore.instance
-        .collection('meat')
+        .collection('items')
         .snapshots()
         .listen((snapshot) {
       _items = [];
       snapshot.docs.forEach((document) {
-        print('doc ${document.data()}');
         _items.add(Item(
-          category: 'meat',
+          category: document.data()['category'],
           barcode: document.data()['barcode'],
           name: document.data()['name'],
           units: document.data()['units'],
@@ -93,7 +92,8 @@ class ApplicationState extends ChangeNotifier {
     // TODO checks shouldn't be needed because form verfies everything?
     // TODO Separate check for existing elements
     // calculate R per UoM (rpu)
-    return FirebaseFirestore.instance.collection(category).add({
+    return FirebaseFirestore.instance.collection('items').add({
+      'category': category,
       'barcode': barcode,
       'name': name,
       'units': units,

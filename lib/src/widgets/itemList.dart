@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cheapee/src/widgets/paragraph.dart';
 
 class Item {
   Item(
@@ -36,14 +37,9 @@ class _ItemListState extends State<ItemList> {
           DataCell(Text(item.name)),
           DataCell(Text(item.units)),
           DataCell(Text(item.rpu)),
-          DataCell(IconButton(
-            icon: const Icon(Icons.more_vert),
-            tooltip: 'More info',
-            onPressed: () {
-              // TODO
-            },
-          )),
         ],
+        onSelectChanged: (value) =>
+            {print('show dialog - more info / choose item')},
       ));
     }
     return rows;
@@ -51,38 +47,39 @@ class _ItemListState extends State<ItemList> {
 
   @override
   Widget build(BuildContext context) {
-    return DataTable(
-      columns: const <DataColumn>[
-        DataColumn(
-          label: Flexible(
-              child: Text(
-            'Name',
-            style: TextStyle(fontStyle: FontStyle.italic),
-          )),
-        ),
-        DataColumn(
-          label: Flexible(
-              child: Text(
-            'Units',
-            style: TextStyle(fontStyle: FontStyle.italic),
-          )),
-        ),
-        DataColumn(
-          label: Flexible(
-              child: Text(
-            'R per UoM',
-            style: TextStyle(fontStyle: FontStyle.italic),
-          )),
-        ),
-        DataColumn(
-          label: Flexible(
-              child: Text(
-            'Options',
-            style: TextStyle(fontStyle: FontStyle.italic),
-          )),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        Paragraph(
+            '${widget.items.length > 0 ? 'Looking at: ${widget.items[0].category}' : 'Add items by tapping the bottom button.'}'),
+        DataTable(
+          showCheckboxColumn: false,
+          columns: const <DataColumn>[
+            DataColumn(
+              label: Flexible(
+                  child: Text(
+                'Name',
+                style: TextStyle(fontStyle: FontStyle.italic),
+              )),
+            ),
+            DataColumn(
+              label: Flexible(
+                  child: Text(
+                'Units',
+                style: TextStyle(fontStyle: FontStyle.italic),
+              )),
+            ),
+            DataColumn(
+              label: Flexible(
+                  child: Text(
+                'R per UoM',
+                style: TextStyle(fontStyle: FontStyle.italic),
+              )),
+            ),
+          ],
+          rows: getRows(widget.items),
         ),
       ],
-      rows: getRows(widget.items),
     );
   }
 }
