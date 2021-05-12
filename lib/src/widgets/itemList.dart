@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cheapee/src/widgets/paragraph.dart';
+import 'package:cheapee/src/widgets/iconAndDetail.dart';
 
 class Item {
   Item(
@@ -47,13 +48,15 @@ class _ItemListState extends State<ItemList> {
                         onPressed: () {
                           // TODO go to item details
                         },
-                        child: const Text('Item details'),
+                        child: const IconAndDetail(
+                            Icons.info_outline, 'Item details'),
                       ),
                       SimpleDialogOption(
                         onPressed: () {
                           // Clear list of items
                         },
-                        child: const Text('Select Item'),
+                        child:
+                            const IconAndDetail(Icons.check_box, 'Select Item'),
                       ),
                     ],
                   ))
