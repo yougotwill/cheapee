@@ -28,8 +28,7 @@ class ItemList extends StatefulWidget {
 }
 
 class _ItemListState extends State<ItemList> {
-//name, units, r per uom, more details
-  List<DataRow> getRows(items) {
+  List<DataRow> _getRows(items) {
     List<DataRow> rows = [];
     for (var item in items) {
       rows.add(new DataRow(
@@ -38,8 +37,27 @@ class _ItemListState extends State<ItemList> {
           DataCell(Text(item.units)),
           DataCell(Text(item.rpu)),
         ],
-        onSelectChanged: (value) =>
-            {print('show dialog - more info / choose item')},
+        onSelectChanged: (value) => {
+          showDialog(
+              context: context,
+              builder: (_) => SimpleDialog(
+                    title: const Text('Item Actions'),
+                    children: <Widget>[
+                      SimpleDialogOption(
+                        onPressed: () {
+                          // TODO go to item details
+                        },
+                        child: const Text('Item details'),
+                      ),
+                      SimpleDialogOption(
+                        onPressed: () {
+                          // Clear list of items
+                        },
+                        child: const Text('Select Item'),
+                      ),
+                    ],
+                  ))
+        },
       ));
     }
     return rows;
@@ -77,7 +95,7 @@ class _ItemListState extends State<ItemList> {
               )),
             ),
           ],
-          rows: getRows(widget.items),
+          rows: _getRows(widget.items),
         ),
       ],
     );
