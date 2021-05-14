@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:barcode_scan2/barcode_scan2.dart';
 
 import '../widgets/header.dart';
 import '../widgets/itemForm.dart';
@@ -26,9 +27,8 @@ class AddItemPage extends StatefulWidget {
 }
 
 class _AddItemPageState extends State<AddItemPage> {
-  void _scanItem() {
-    // use package here to scan and store barcode
-  }
+  // void _scanItem() async {
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +42,20 @@ class _AddItemPageState extends State<AddItemPage> {
           children: <Widget>[
             Header('Scan a barcode'),
             ElevatedButton(
-              onPressed: _scanItem,
+              onPressed: () async {
+                var result = await BarcodeScanner.scan();
+                print(result
+                    .type); // The result type (barcode, cancelled, failed)
+                print(result.rawContent); // The barcode content
+                print(result.format); // The barcode format (as enum)
+                print(result
+                    .formatNote); // If a unknown format was scanned this field contains a note
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content:
+                      Text('Scanned: ${result.type}, ${result.rawContent}'),
+                  backgroundColor: Colors.indigo,
+                ));
+              },
               child: Text("Let's go!"),
             ),
             Header("Item Details"),
