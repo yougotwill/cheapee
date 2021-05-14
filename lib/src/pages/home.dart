@@ -1,10 +1,15 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../widgets/header.dart';
 import '../widgets/itemList.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key? key, required this.title, required this.items})
+  HomePage(
+      {Key? key,
+      required this.title,
+      required this.items,
+      required this.clearItems})
       : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -18,6 +23,7 @@ class HomePage extends StatefulWidget {
 
   final String title;
   final List<Item> items;
+  final FutureOr<void> Function() clearItems;
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -63,7 +69,7 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Header("Let's get the best deal!"),
-            ItemList(items: widget.items),
+            ItemList(items: widget.items, clearItems: widget.clearItems),
           ],
         ),
       ),

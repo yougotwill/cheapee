@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:cheapee/src/widgets/paragraph.dart';
 import 'package:cheapee/src/widgets/iconAndDetail.dart';
@@ -23,8 +24,9 @@ class Item {
 }
 
 class ItemList extends StatefulWidget {
-  ItemList({required this.items});
+  ItemList({required this.items, required this.clearItems});
   final List<Item> items;
+  final FutureOr<void> Function() clearItems;
 
   @override
   _ItemListState createState() => _ItemListState();
@@ -56,8 +58,14 @@ class _ItemListState extends State<ItemList> {
                             Icons.info_outline, 'More information'),
                       ),
                       SimpleDialogOption(
-                        onPressed: () {
-                          // Clear list of items
+                        onPressed: () async {
+                          await widget.clearItems();
+                          // TODO confirm this happens after the promise resolves
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text('Good choice! Whats next?'),
+                            backgroundColor: Colors.indigo,
+                          ));
+                          Navigator.pop(context);
                         },
                         child: const IconAndDetail(
                             Icons.check_box, 'Choose this item'),
@@ -77,33 +85,34 @@ class _ItemListState extends State<ItemList> {
       children: <Widget>[
         Paragraph(
             '${widget.items.length > 0 ? 'Looking at: ${widget.items[0].category}' : 'Add items by tapping the bottom button.'}'),
-        DataTable(
-          showCheckboxColumn: false,
-          columns: const <DataColumn>[
-            DataColumn(
-              label: Flexible(
-                  child: Text(
-                'Name',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              )),
-            ),
-            DataColumn(
-              label: Flexible(
-                  child: Text(
-                'Units',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              )),
-            ),
-            DataColumn(
-              label: Flexible(
-                  child: Text(
-                'R per UoM',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              )),
-            ),
-          ],
-          rows: _getRows(widget.items),
-        ),
+        if (widget.items.length > 0)
+          DataTable(
+            showCheckboxColumn: false,
+            columns: const <DataColumn>[
+              DataColumn(
+                label: Flexible(
+                    child: Text(
+                  'Name',
+                  style: TextStyle(fontStyle: FontStyle.italic),
+                )),
+              ),
+              DataColumn(
+                label: Flexible(
+                    child: Text(
+                  'Units',
+                  style: TextStyle(fontStyle: FontStyle.italic),
+                )),
+              ),
+              DataColumn(
+                label: Flexible(
+                    child: Text(
+                  'R per UoM',
+                  style: TextStyle(fontStyle: FontStyle.italic),
+                )),
+              ),
+            ],
+            rows: _getRows(widget.items),
+          ),
       ],
     );
   }
