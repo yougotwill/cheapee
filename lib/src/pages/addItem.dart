@@ -1,11 +1,12 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../widgets/header.dart';
-import '../widgets/paragraph.dart';
 import '../widgets/itemForm.dart';
 
 class AddItemPage extends StatefulWidget {
-  AddItemPage({Key key, this.title, this.saveItem}) : super(key: key);
+  AddItemPage({Key? key, required this.title, required this.saveItem})
+      : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -17,7 +18,7 @@ class AddItemPage extends StatefulWidget {
   // always marked "final".
 
   final String title;
-  final void Function(String category, String barcode, String name,
+  final FutureOr<void> Function(String category, String barcode, String name,
       String units, String uom, String price) saveItem;
 
   @override
