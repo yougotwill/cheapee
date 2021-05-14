@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cheapee/src/widgets/paragraph.dart';
 import 'package:cheapee/src/widgets/iconAndDetail.dart';
+import 'package:cheapee/src/pages/itemDetails.dart'
+    show ItemDetailsPageArguments;
 
 class Item {
   Item(
@@ -42,21 +44,23 @@ class _ItemListState extends State<ItemList> {
           showDialog(
               context: context,
               builder: (_) => SimpleDialog(
-                    title: const Text('Item Actions'),
+                    title: const Text('Actions'),
                     children: <Widget>[
                       SimpleDialogOption(
                         onPressed: () {
-                          // TODO go to item details
+                          Navigator.pop(context);
+                          Navigator.pushNamed(context, '/details',
+                              arguments: ItemDetailsPageArguments(item, false));
                         },
                         child: const IconAndDetail(
-                            Icons.info_outline, 'Item details'),
+                            Icons.info_outline, 'More information'),
                       ),
                       SimpleDialogOption(
                         onPressed: () {
                           // Clear list of items
                         },
-                        child:
-                            const IconAndDetail(Icons.check_box, 'Select Item'),
+                        child: const IconAndDetail(
+                            Icons.check_box, 'Choose this item'),
                       ),
                     ],
                   ))

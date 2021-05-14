@@ -8,6 +8,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'src/pages/home.dart';
 import 'src/pages/addItem.dart';
+import 'src/pages/itemDetails.dart';
+
 import 'src/widgets/itemList.dart' show Item;
 
 void main() {
@@ -45,6 +47,12 @@ class App extends StatelessWidget {
           '/add': (context) => Consumer<ApplicationState>(
                 builder: (context, appState, _) => AddItemPage(
                   title: 'Add item',
+                  saveItem: appState.saveItem,
+                ),
+              ),
+          '/details': (context) => Consumer<ApplicationState>(
+                builder: (context, appState, _) => ItemDetailsPage(
+                  title: 'Item Details',
                   saveItem: appState.saveItem,
                 ),
               ),
