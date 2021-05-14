@@ -1,10 +1,17 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:cheapee/src/widgets/itemList.dart' show Item;
 
 class ItemForm extends StatefulWidget {
-  ItemForm({required this.saveItem});
+  ItemForm({
+    required this.saveItem,
+    required this.item,
+    required this.canEdit,
+  });
   final FutureOr<void> Function(String category, String barcode, String name,
       String units, String uom, String price) saveItem;
+  final Item? item;
+  final bool canEdit;
 
   @override
   ItemFormState createState() {
@@ -20,8 +27,8 @@ class ItemFormState extends State<ItemForm> {
   // not a GlobalKey<MyCustomFormState>.
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  String categoryValue = 'cheese';
-  String uomValue = 'g';
+  String categoryValue = '';
+  String uomValue = '';
 
   // TODO make map of <category, uom> which will change
   // the default value of uom on category value changing
@@ -30,6 +37,18 @@ class ItemFormState extends State<ItemForm> {
   final textNameController = TextEditingController();
   final textUnitsController = TextEditingController();
   final textPriceController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // TODO not sure how clean this is
+    categoryValue = this.widget.item?.category ?? 'cheese';
+    uomValue = this.widget.item?.uom ?? 'g';
+    textBarcodeController.text = this.widget.item?.barcode ?? '';
+    textUnitsController.text = this.widget.item?.units ?? '';
+    textNameController.text = this.widget.item?.name ?? '';
+    textPriceController.text = this.widget.item?.price ?? '';
+  }
 
   @override
   void dispose() {
@@ -173,26 +192,27 @@ class ItemFormState extends State<ItemForm> {
               },
             ),
           ),
-          ElevatedButton(
-            onPressed: () async {
-              if (_formKey.currentState!.validate()) {
-                await widget.saveItem(
-                    categoryValue,
-                    textBarcodeController.text,
-                    textNameController.text,
-                    textUnitsController.text,
-                    uomValue,
-                    textPriceController.text);
-                // TODO confirm this happens after the promise resolves
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text('Item added'),
-                  backgroundColor: Colors.indigo,
-                ));
-                Navigator.pop(context);
-              }
-            },
-            child: Text('Save Item'),
-          ),
+          if (widget.item == null)
+            ElevatedButton(
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  await widget.saveItem(
+                      categoryValue,
+                      textBarcodeController.text,
+                      textNameController.text,
+                      textUnitsController.text,
+                      uomValue,
+                      textPriceController.text);
+                  // TODO confirm this happens after the promise resolves
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Item added'),
+                    backgroundColor: Colors.indigo,
+                  ));
+                  Navigator.pop(context);
+                }
+              },
+              child: Text('Save'),
+            ),
         ],
       ),
     );

@@ -48,6 +48,8 @@ class _AddItemPageState extends State<AddItemPage> {
             Header("Item Details"),
             ItemForm(
               saveItem: widget.saveItem,
+              item: null,
+              canEdit: true,
             ),
           ],
         ),
