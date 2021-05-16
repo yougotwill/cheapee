@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:cheapee/src/widgets/itemList.dart' show Item;
-import 'package:cheapee/src/pages/itemDetails.dart'
-    show ItemDetailsPageArguments;
+
+import '../pages/itemDetails.dart' show ItemDetailsPageArguments;
+import 'itemList.dart' show Item;
 
 class ItemForm extends StatefulWidget {
   ItemForm({
@@ -26,11 +26,6 @@ class ItemForm extends StatefulWidget {
 }
 
 class ItemFormState extends State<ItemForm> {
-  // Create a global key that uniquely identifies the Form widget
-  // and allows validation of the form.
-  //
-  // Note: This is a `GlobalKey<FormState>`,
-  // not a GlobalKey<MyCustomFormState>.
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   Map<String, String> categories = {
@@ -50,18 +45,22 @@ class ItemFormState extends State<ItemForm> {
   String uomValue = '';
 
   final uomDropdownState = GlobalKey<FormFieldState>();
-
   final textBarcodeController = TextEditingController();
   final textNameController = TextEditingController();
   final textUnitsController = TextEditingController();
   final textPriceController = TextEditingController();
 
-  void _loadBarcode(widget) {
+  void _initFormState(widget) {
     if (widget.barcode != null) {
       textBarcodeController.text = widget.barcode;
     } else {
       textBarcodeController.text = widget.item?.barcode ?? '';
     }
+    categoryValue = this.widget.item?.category ?? 'cheese';
+    uomValue = this.widget.item?.uom ?? 'g';
+    textUnitsController.text = this.widget.item?.units ?? '';
+    textNameController.text = this.widget.item?.name ?? '';
+    textPriceController.text = this.widget.item?.price ?? '';
   }
 
   void _saveItem() async {
@@ -87,6 +86,14 @@ class ItemFormState extends State<ItemForm> {
       backgroundColor: Colors.indigo[200],
     ));
     Navigator.of(context).pop();
+  }
+
+  void _enabledEditing(ItemForm widget) async {
+    Item? existingItem =
+        await widget.isExistingItem(textBarcodeController.text);
+    Navigator.of(context).pop();
+    Navigator.pushNamed(context, '/details',
+        arguments: ItemDetailsPageArguments(existingItem, true));
   }
 
   Future<void> _showConfirmationDialog() async {
@@ -126,13 +133,7 @@ class ItemFormState extends State<ItemForm> {
   @override
   void initState() {
     super.initState();
-    // TODO not sure how clean this is
-    categoryValue = this.widget.item?.category ?? 'cheese';
-    uomValue = this.widget.item?.uom ?? 'g';
-    _loadBarcode(this.widget);
-    textUnitsController.text = this.widget.item?.units.toString() ?? '';
-    textNameController.text = this.widget.item?.name ?? '';
-    textPriceController.text = this.widget.item?.price.toString() ?? '';
+    _initFormState(this.widget);
   }
 
   @override
@@ -238,7 +239,9 @@ class ItemFormState extends State<ItemForm> {
               disabledHint: Text(uomValue),
               items: categories.values.map<DropdownMenuItem<String>>((value) {
                 return DropdownMenuItem<String>(
-                    value: value, child: Text(uoms[value]!));
+                  value: value,
+                  child: Text(uoms[value]!),
+                );
               }).toList(),
               onChanged: widget.canEdit
                   ? (String? value) async {
@@ -273,10 +276,7 @@ class ItemFormState extends State<ItemForm> {
               },
             ),
           ),
-          SizedBox(
-            width: 16.0,
-            height: 16.0,
-          ),
+          SizedBox(width: 16.0, height: 16.0),
           if (widget.canEdit || widget.item == null)
             ElevatedButton(
               onPressed: () async {
@@ -294,12 +294,8 @@ class ItemFormState extends State<ItemForm> {
             ),
           if (!widget.canEdit)
             ElevatedButton(
-              onPressed: () async {
-                Item? existingItem =
-                    await widget.isExistingItem(textBarcodeController.text);
-                Navigator.of(context).pop();
-                Navigator.pushNamed(context, '/details',
-                    arguments: ItemDetailsPageArguments(existingItem, true));
+              onPressed: () {
+                _enabledEditing(widget);
               },
               child: Text('Edit'),
             ),

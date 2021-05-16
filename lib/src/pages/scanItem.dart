@@ -1,8 +1,8 @@
-import 'package:cheapee/src/widgets/paragraph.dart';
 import 'package:flutter/material.dart';
 import 'package:barcode_scan2/barcode_scan2.dart';
 
 import '../widgets/header.dart';
+import '../widgets/paragraph.dart';
 import '../pages/addItem.dart' show AddItemPageArguments;
 import '../widgets/itemList.dart' show Item;
 import '../pages/itemDetails.dart' show ItemDetailsPageArguments;
@@ -24,7 +24,7 @@ class _ScanItemPageState extends State<ScanItemPage> {
     Future<void> _showConfirmationDialog(barcode, existingItem) async {
       return showDialog<void>(
         context: context,
-        barrierDismissible: false, // user must tap button!
+        barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text('Warning'),
@@ -61,6 +61,35 @@ class _ScanItemPageState extends State<ScanItemPage> {
       );
     }
 
+    void _scanItem(ScanItemPage widget) async {
+      var result = await BarcodeScanner.scan();
+      switch (result.type) {
+        case ResultType.Barcode:
+          Item? existingItem = await widget.isExistingItem(result.rawContent);
+          if (existingItem != null) {
+            _showConfirmationDialog(result.rawContent, existingItem);
+          } else {
+            Navigator.pushNamed(context, '/add',
+                arguments: AddItemPageArguments(result.rawContent));
+          }
+          break;
+        case ResultType.Error:
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Scan failed. Please try again.'),
+            backgroundColor: Colors.red[100],
+          ));
+          break;
+        case ResultType.Cancelled:
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Scan cancelled.'),
+            backgroundColor: Colors.indigo[200],
+          ));
+          break;
+        default:
+          break;
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -70,56 +99,20 @@ class _ScanItemPageState extends State<ScanItemPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            SizedBox(
-              width: 16.0,
-              height: 16.0,
-            ),
+            SizedBox(width: 16.0, height: 16.0),
             Header('Barcode Scanner'),
-            Paragraph("Scan a barcode with your camera!"),
-            Paragraph("Automatically enter your item's barcode."),
-            SizedBox(
-              width: 8.0,
-              height: 8.0,
-            ),
+            Paragraph("Use your camera!"),
+            SizedBox(width: 8.0, height: 8.0),
             ElevatedButton(
-              onPressed: () async {
-                var result = await BarcodeScanner.scan();
-                if (result.type == ResultType.Barcode) {
-                  Item? existingItem =
-                      await widget.isExistingItem(result.rawContent);
-                  if (existingItem != null) {
-                    _showConfirmationDialog(result.rawContent, existingItem);
-                  } else {
-                    Navigator.pushNamed(context, '/add',
-                        arguments: AddItemPageArguments(result.rawContent));
-                  }
-                } else {
-                  if (result.type == ResultType.Error) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text('Scan failed. Please try again.'),
-                      backgroundColor: Colors.red[100],
-                    ));
-                  }
-                  if (result.type == ResultType.Cancelled) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text('Scan cancelled.'),
-                      backgroundColor: Colors.indigo[200],
-                    ));
-                  }
-                }
+              onPressed: () {
+                _scanItem(widget);
               },
               child: Text("Let's go!"),
             ),
-            SizedBox(
-              width: 32.0,
-              height: 32.0,
-            ),
+            SizedBox(width: 32.0, height: 32.0),
             Header('Manual Entry'),
             Paragraph("Manually enter the item's barcode."),
-            SizedBox(
-              width: 8.0,
-              height: 8.0,
-            ),
+            SizedBox(width: 8.0, height: 8.0),
             ElevatedButton(
               onPressed: () {
                 Navigator.pushNamed(context, '/add',

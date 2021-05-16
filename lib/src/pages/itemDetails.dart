@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:cheapee/src/widgets/itemList.dart' show Item;
 
 import '../widgets/itemForm.dart';
+import '../widgets/itemList.dart' show Item;
 
 class ItemDetailsPageArguments {
   final Item? item;
