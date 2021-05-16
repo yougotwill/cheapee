@@ -31,11 +31,23 @@ class ItemFormState extends State<ItemForm> {
   // not a GlobalKey<MyCustomFormState>.
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  Map<String, String> categories = {
+    'cheese': 'g',
+    'eggs': 'ea',
+    'milk': 'l',
+    'meat': 'kg'
+  };
   String categoryValue = '';
+
+  Map<String, String> uoms = {
+    'g': 'Grams',
+    'ea': 'Each',
+    'l': 'Litres',
+    'kg': 'Kilograms'
+  };
   String uomValue = '';
 
-  // TODO make map of <category, uom> which will change
-  // the default value of uom on category value changing
+  final uomDropdownState = GlobalKey<FormFieldState>();
 
   final textBarcodeController = TextEditingController();
   final textNameController = TextEditingController();
@@ -158,25 +170,15 @@ class ItemFormState extends State<ItemForm> {
             padding: EdgeInsets.all(8.0),
             child: DropdownButtonFormField<String>(
               decoration: InputDecoration(labelText: 'Category'),
-              // TODO can build items with map https://api.flutter.dev/flutter/material/DropdownButton-class.html
-              items: [
-                DropdownMenuItem<String>(
-                  value: 'cheese',
-                  child: Text('Cheese'),
-                ),
-                DropdownMenuItem<String>(
-                  value: 'eggs',
-                  child: Text('Eggs'),
-                ),
-                DropdownMenuItem<String>(
-                  value: 'milk',
-                  child: Text('Milk'),
-                ),
-                DropdownMenuItem<String>(
-                  value: 'meat',
-                  child: Text('Meat'),
-                ),
-              ],
+              items: categories.keys.map<DropdownMenuItem<String>>((key) {
+                return DropdownMenuItem<String>(
+                  value: key,
+                  child: Text('${key[0].toUpperCase()}${key.substring(1)}'),
+                  onTap: () => {
+                    uomDropdownState.currentState!.didChange(categories[key])
+                  },
+                );
+              }).toList(),
               onChanged: (String? value) async {
                 setState(() {
                   categoryValue = value!;
@@ -223,25 +225,11 @@ class ItemFormState extends State<ItemForm> {
             padding: EdgeInsets.all(8.0),
             child: DropdownButtonFormField<String>(
               decoration: InputDecoration(labelText: 'UoM'),
-              // TODO can build items with map https://api.flutter.dev/flutter/material/DropdownButton-class.html
-              items: [
-                DropdownMenuItem<String>(
-                  value: 'g',
-                  child: Text('gram'),
-                ),
-                DropdownMenuItem<String>(
-                  value: 'kg',
-                  child: Text('kilogram'),
-                ),
-                DropdownMenuItem<String>(
-                  value: 'l',
-                  child: Text('litre'),
-                ),
-                DropdownMenuItem<String>(
-                  value: 'ea',
-                  child: Text('each'),
-                ),
-              ],
+              key: uomDropdownState,
+              items: categories.values.map<DropdownMenuItem<String>>((value) {
+                return DropdownMenuItem<String>(
+                    value: value, child: Text(uoms[value]!));
+              }).toList(),
               onChanged: (String? value) async {
                 setState(() {
                   uomValue = value!;
