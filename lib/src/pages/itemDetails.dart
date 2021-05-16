@@ -19,7 +19,7 @@ class ItemDetailsPage extends StatefulWidget {
   }) : super(key: key);
 
   final String title;
-  final FutureOr<void> Function(String category, String barcode, String name,
+  final Future<void> Function(String category, String barcode, String name,
       String units, String uom, String price) saveItem;
   final Future<Item?> Function(String barcode) isExistingItem;
 

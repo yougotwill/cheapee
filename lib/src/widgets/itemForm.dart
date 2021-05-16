@@ -10,7 +10,7 @@ class ItemForm extends StatefulWidget {
     required this.barcode,
     required this.isExistingItem,
   });
-  final FutureOr<void> Function(String category, String barcode, String name,
+  final Future<void> Function(String category, String barcode, String name,
       String units, String uom, String price) saveItem;
   final Item? item;
   final bool canEdit;
@@ -63,7 +63,7 @@ class ItemFormState extends State<ItemForm> {
       content: Text('Item added'),
       backgroundColor: Colors.indigo,
     ));
-    Navigator.popUntil(context, ModalRoute.withName('/'));
+    Navigator.of(context).popUntil(ModalRoute.withName('/'));
   }
 
   void _cancelSave() {
@@ -80,25 +80,24 @@ class ItemFormState extends State<ItemForm> {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Duplicate Item'),
+          title: Text('Warning'),
           content: SingleChildScrollView(
             child: Column(
               children: <Widget>[
-                Text('This item already has data stored.'),
-                Text('Would you like to overwrite this data?'),
+                Text('This item already exists.'),
+                Text("Update it's information?"),
               ],
             ),
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Confirm'),
+              child: Text('Yes'),
               onPressed: () {
-                // TODO add overwriting existing item feature
                 _saveItem();
               },
             ),
             TextButton(
-              child: Text('Cancel'),
+              child: Text('No'),
               onPressed: () {
                 _cancelSave();
               },

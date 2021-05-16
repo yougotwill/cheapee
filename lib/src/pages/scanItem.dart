@@ -26,12 +26,12 @@ class _ScanItemPageState extends State<ScanItemPage> {
         barrierDismissible: false, // user must tap button!
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Duplicate Item'),
+            title: Text('Warning'),
             content: SingleChildScrollView(
               child: Column(
                 children: <Widget>[
-                  Text('This item already has data stored.'),
-                  Text('Would you like to update this data?'),
+                  Text('This item has been scanned before.'),
+                  Text("Update it's information?"),
                 ],
               ),
             ),
@@ -47,9 +47,7 @@ class _ScanItemPageState extends State<ScanItemPage> {
               TextButton(
                 child: Text('No'),
                 onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.pushNamed(context, '/add',
-                      arguments: AddItemPageArguments(barcode));
+                  Navigator.of(context).popUntil(ModalRoute.withName('/'));
                 },
               ),
             ],
