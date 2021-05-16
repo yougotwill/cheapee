@@ -107,17 +107,16 @@ class ApplicationState extends ChangeNotifier {
   // methods
   Future<void> saveItem(String category, String barcode, String name,
       String units, String uom, String price) {
-    final priceValue = double.parse(price);
-    final unitsValue = double.parse(units);
-    final String rpu = (priceValue / unitsValue).toStringAsFixed(2);
+    final String rpu =
+        (double.parse(price) / double.parse(units)).toStringAsFixed(2);
 
     return FirebaseFirestore.instance.collection('items').doc(barcode).set({
       'category': category,
       'barcode': barcode,
       'name': name,
-      'units': priceValue,
+      'units': units,
       'uom': uom,
-      'price': unitsValue,
+      'price': price,
       'rpu': 'R$rpu / $uom',
     });
   }

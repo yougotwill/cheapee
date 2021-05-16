@@ -17,9 +17,9 @@ class Item {
   final String category;
   final String barcode;
   final String name;
-  final double units;
+  final String units;
   final String uom;
-  final double price;
+  final String price;
   final String rpu;
 }
 

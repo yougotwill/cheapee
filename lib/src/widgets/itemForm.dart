@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:cheapee/src/widgets/itemList.dart' show Item;
+import 'package:cheapee/src/pages/itemDetails.dart'
+    show ItemDetailsPageArguments;
 
 class ItemForm extends StatefulWidget {
   ItemForm({
@@ -64,12 +66,13 @@ class ItemFormState extends State<ItemForm> {
 
   void _saveItem() async {
     await widget.saveItem(
-        categoryValue,
-        textBarcodeController.text,
-        textNameController.text,
-        textUnitsController.text,
-        uomValue,
-        textPriceController.text);
+      categoryValue,
+      textBarcodeController.text,
+      textNameController.text,
+      textUnitsController.text,
+      uomValue,
+      textPriceController.text,
+    );
     // TODO confirm this happens after the promise resolves
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text('Item added'),
@@ -152,6 +155,7 @@ class ItemFormState extends State<ItemForm> {
             child: TextFormField(
               controller: textBarcodeController,
               decoration: InputDecoration(labelText: 'Barcode'),
+              enabled: widget.canEdit,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Cannot be empty';
@@ -170,6 +174,7 @@ class ItemFormState extends State<ItemForm> {
             padding: EdgeInsets.all(8.0),
             child: DropdownButtonFormField<String>(
               decoration: InputDecoration(labelText: 'Category'),
+              disabledHint: Text(categoryValue),
               items: categories.keys.map<DropdownMenuItem<String>>((key) {
                 return DropdownMenuItem<String>(
                   value: key,
@@ -179,11 +184,13 @@ class ItemFormState extends State<ItemForm> {
                   },
                 );
               }).toList(),
-              onChanged: (String? value) async {
-                setState(() {
-                  categoryValue = value!;
-                });
-              },
+              onChanged: widget.canEdit
+                  ? (String? value) async {
+                      setState(() {
+                        categoryValue = value!;
+                      });
+                    }
+                  : null,
               value: categoryValue,
               validator: (value) =>
                   value == null ? 'Please choose a category' : null,
@@ -194,6 +201,7 @@ class ItemFormState extends State<ItemForm> {
             child: TextFormField(
               controller: textNameController,
               decoration: InputDecoration(labelText: 'Name'),
+              enabled: widget.canEdit,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Cannot be empty';
@@ -207,6 +215,7 @@ class ItemFormState extends State<ItemForm> {
             child: TextFormField(
               controller: textUnitsController,
               decoration: InputDecoration(labelText: 'Units'),
+              enabled: widget.canEdit,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Cannot be empty';
@@ -226,15 +235,18 @@ class ItemFormState extends State<ItemForm> {
             child: DropdownButtonFormField<String>(
               decoration: InputDecoration(labelText: 'UoM'),
               key: uomDropdownState,
+              disabledHint: Text(uomValue),
               items: categories.values.map<DropdownMenuItem<String>>((value) {
                 return DropdownMenuItem<String>(
                     value: value, child: Text(uoms[value]!));
               }).toList(),
-              onChanged: (String? value) async {
-                setState(() {
-                  uomValue = value!;
-                });
-              },
+              onChanged: widget.canEdit
+                  ? (String? value) async {
+                      setState(() {
+                        uomValue = value!;
+                      });
+                    }
+                  : null,
               value: uomValue,
               validator: (value) =>
                   value == null ? 'Please choose a unit of measurement' : null,
@@ -245,6 +257,7 @@ class ItemFormState extends State<ItemForm> {
             child: TextFormField(
               controller: textPriceController,
               decoration: InputDecoration(labelText: 'Price'),
+              enabled: widget.canEdit,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Cannot be empty';
@@ -274,6 +287,17 @@ class ItemFormState extends State<ItemForm> {
                 }
               },
               child: Text('Save'),
+            ),
+          if (!widget.canEdit)
+            ElevatedButton(
+              onPressed: () async {
+                Item? existingItem =
+                    await widget.isExistingItem(textBarcodeController.text);
+                Navigator.of(context).pop();
+                Navigator.pushNamed(context, '/details',
+                    arguments: ItemDetailsPageArguments(existingItem, true));
+              },
+              child: Text('Edit'),
             ),
         ],
       ),
