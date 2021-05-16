@@ -51,7 +51,6 @@ class _ItemListState extends State<ItemList> {
                 SimpleDialogOption(
                   onPressed: () async {
                     await widget.clearItems();
-                    // TODO confirm this happens after the promise resolves
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       content: Text('Good choice! Whats next?'),
                       backgroundColor: Colors.indigo,

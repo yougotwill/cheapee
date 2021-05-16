@@ -63,6 +63,12 @@ class ApplicationState extends ChangeNotifier {
     init();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    _itemsSubscription?.cancel();
+  }
+
   Future<void> init() async {
     await Firebase.initializeApp();
 

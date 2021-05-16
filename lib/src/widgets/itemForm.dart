@@ -72,7 +72,6 @@ class ItemFormState extends State<ItemForm> {
       uomValue,
       textPriceController.text,
     );
-    // TODO confirm this happens after the promise resolves
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text('Added Item'),
       backgroundColor: Colors.indigo,
