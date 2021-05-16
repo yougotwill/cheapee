@@ -3,11 +3,15 @@ import 'package:barcode_scan2/barcode_scan2.dart';
 
 import '../widgets/header.dart';
 import '../pages/addItem.dart' show AddItemPageArguments;
+import '../widgets/itemList.dart' show Item;
+import '../pages/itemDetails.dart' show ItemDetailsPageArguments;
 
 class ScanItemPage extends StatefulWidget {
-  ScanItemPage({Key? key, required this.title}) : super(key: key);
+  ScanItemPage({Key? key, required this.title, required this.isExistingItem})
+      : super(key: key);
 
   final String title;
+  final Future<Item?> Function(String barcode) isExistingItem;
 
   @override
   _ScanItemPageState createState() => _ScanItemPageState();
@@ -16,6 +20,44 @@ class ScanItemPage extends StatefulWidget {
 class _ScanItemPageState extends State<ScanItemPage> {
   @override
   Widget build(BuildContext context) {
+    Future<void> _showConfirmationDialog(barcode, existingItem) async {
+      return showDialog<void>(
+        context: context,
+        barrierDismissible: false, // user must tap button!
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Duplicate Item'),
+            content: SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  Text('This item already has data stored.'),
+                  Text('Would you like to update this data?'),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: Text('Yes'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.pushNamed(context, '/details',
+                      arguments: ItemDetailsPageArguments(existingItem, true));
+                },
+              ),
+              TextButton(
+                child: Text('No'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.pushNamed(context, '/add',
+                      arguments: AddItemPageArguments(barcode));
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -36,12 +78,9 @@ class _ScanItemPageState extends State<ScanItemPage> {
                     backgroundColor: Colors.red,
                   ));
                 } else {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('Scan succeeded!'),
-                    backgroundColor: Colors.indigo,
-                  ));
-                  Navigator.pushNamed(context, '/add',
-                      arguments: AddItemPageArguments(result.rawContent));
+                  Item? existingItem =
+                      await widget.isExistingItem(result.rawContent);
+                  _showConfirmationDialog(result.rawContent, existingItem);
                 }
               },
               child: Text("Let's go!"),

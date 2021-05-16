@@ -48,19 +48,22 @@ class App extends StatelessWidget {
                     clearItems: appState.clearItems),
               ),
           '/scan': (context) => Consumer<ApplicationState>(
-                builder: (context, appState, _) =>
-                    ScanItemPage(title: 'Add item: Scan'),
+                builder: (context, appState, _) => ScanItemPage(
+                    title: 'Add item: Scan',
+                    isExistingItem: appState.isExistingItem),
               ),
           '/add': (context) => Consumer<ApplicationState>(
                 builder: (context, appState, _) => AddItemPage(
                   title: 'Add item: Enter details',
                   saveItem: appState.saveItem,
+                  isExistingItem: appState.isExistingItem,
                 ),
               ),
           '/details': (context) => Consumer<ApplicationState>(
                 builder: (context, appState, _) => ItemDetailsPage(
                   title: 'Item Details',
                   saveItem: appState.saveItem,
+                  isExistingItem: appState.isExistingItem,
                 ),
               ),
         });
@@ -116,6 +119,27 @@ class ApplicationState extends ChangeNotifier {
       'price': price,
       'rpu': '0.0',
     });
+  }
+
+  Future<Item?> isExistingItem(String barcode) async {
+    final QuerySnapshot result = await FirebaseFirestore.instance
+        .collection('items')
+        .where('barcode', isEqualTo: barcode)
+        .get();
+    final List<DocumentSnapshot> documents = result.docs;
+    if (documents.length == 1) {
+      DocumentSnapshot<Object?> document = documents.single;
+      return new Item(
+        category: document.get('category'),
+        barcode: document.get('barcode'),
+        name: document.get('name'),
+        units: document.get('units'),
+        uom: document.get('uom'),
+        price: document.get('price'),
+        rpu: document.get('rpu'),
+      );
+    }
+    return null;
   }
 
   Future<void> clearItems() {

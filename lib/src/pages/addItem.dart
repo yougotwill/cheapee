@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cheapee/src/widgets/itemList.dart' show Item;
 import 'package:flutter/material.dart';
 
 import '../widgets/header.dart';
@@ -10,7 +11,11 @@ class AddItemPageArguments {
 }
 
 class AddItemPage extends StatefulWidget {
-  AddItemPage({Key? key, required this.title, required this.saveItem})
+  AddItemPage(
+      {Key? key,
+      required this.title,
+      required this.saveItem,
+      required this.isExistingItem})
       : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -25,6 +30,7 @@ class AddItemPage extends StatefulWidget {
   final String title;
   final FutureOr<void> Function(String category, String barcode, String name,
       String units, String uom, String price) saveItem;
+  final Future<Item?> Function(String barcode) isExistingItem;
 
   @override
   _AddItemPageState createState() => _AddItemPageState();
@@ -49,6 +55,7 @@ class _AddItemPageState extends State<AddItemPage> {
               item: null,
               canEdit: true,
               barcode: args.barcode,
+              isExistingItem: widget.isExistingItem,
             ),
           ],
         ),

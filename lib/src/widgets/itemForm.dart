@@ -8,12 +8,14 @@ class ItemForm extends StatefulWidget {
     required this.item,
     required this.canEdit,
     required this.barcode,
+    required this.isExistingItem,
   });
   final FutureOr<void> Function(String category, String barcode, String name,
       String units, String uom, String price) saveItem;
   final Item? item;
   final bool canEdit;
   final String? barcode;
+  final Future<Item?> Function(String barcode) isExistingItem;
 
   @override
   ItemFormState createState() {
@@ -46,6 +48,65 @@ class ItemFormState extends State<ItemForm> {
     } else {
       textBarcodeController.text = widget.item?.barcode ?? '';
     }
+  }
+
+  void _saveItem() async {
+    await widget.saveItem(
+        categoryValue,
+        textBarcodeController.text,
+        textNameController.text,
+        textUnitsController.text,
+        uomValue,
+        textPriceController.text);
+    // TODO confirm this happens after the promise resolves
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('Item added'),
+      backgroundColor: Colors.indigo,
+    ));
+    Navigator.popUntil(context, ModalRoute.withName('/'));
+  }
+
+  void _cancelSave() {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('Save cancelled'),
+      backgroundColor: Colors.indigo[200],
+    ));
+    Navigator.of(context).pop();
+  }
+
+  Future<void> _showConfirmationDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Duplicate Item'),
+          content: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Text('This item already has data stored.'),
+                Text('Would you like to overwrite this data?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Confirm'),
+              onPressed: () {
+                // TODO add overwriting existing item feature
+                _saveItem();
+              },
+            ),
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                _cancelSave();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -202,23 +263,17 @@ class ItemFormState extends State<ItemForm> {
               },
             ),
           ),
-          if (widget.item == null)
+          if (widget.canEdit || widget.item == null)
             ElevatedButton(
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
-                  await widget.saveItem(
-                      categoryValue,
-                      textBarcodeController.text,
-                      textNameController.text,
-                      textUnitsController.text,
-                      uomValue,
-                      textPriceController.text);
-                  // TODO confirm this happens after the promise resolves
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('Item added'),
-                    backgroundColor: Colors.indigo,
-                  ));
-                  Navigator.popUntil(context, ModalRoute.withName('/'));
+                  Item? existingItem =
+                      await widget.isExistingItem(textBarcodeController.text);
+                  if (existingItem != null) {
+                    _showConfirmationDialog();
+                  } else {
+                    _saveItem();
+                  }
                 }
               },
               child: Text('Save'),
