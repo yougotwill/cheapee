@@ -7,11 +7,13 @@ class ItemForm extends StatefulWidget {
     required this.saveItem,
     required this.item,
     required this.canEdit,
+    required this.barcode,
   });
   final FutureOr<void> Function(String category, String barcode, String name,
       String units, String uom, String price) saveItem;
   final Item? item;
   final bool canEdit;
+  final String? barcode;
 
   @override
   ItemFormState createState() {
@@ -38,13 +40,21 @@ class ItemFormState extends State<ItemForm> {
   final textUnitsController = TextEditingController();
   final textPriceController = TextEditingController();
 
+  void _loadBarcode(widget) {
+    if (widget.barcode != null) {
+      textBarcodeController.text = widget.barcode;
+    } else {
+      textBarcodeController.text = widget.item?.barcode ?? '';
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     // TODO not sure how clean this is
     categoryValue = this.widget.item?.category ?? 'cheese';
     uomValue = this.widget.item?.uom ?? 'g';
-    textBarcodeController.text = this.widget.item?.barcode ?? '';
+    _loadBarcode(this.widget);
     textUnitsController.text = this.widget.item?.units ?? '';
     textNameController.text = this.widget.item?.name ?? '';
     textPriceController.text = this.widget.item?.price ?? '';
@@ -208,7 +218,7 @@ class ItemFormState extends State<ItemForm> {
                     content: Text('Item added'),
                     backgroundColor: Colors.indigo,
                   ));
-                  Navigator.pop(context);
+                  Navigator.popUntil(context, ModalRoute.withName('/'));
                 }
               },
               child: Text('Save'),

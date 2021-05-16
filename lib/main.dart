@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'src/pages/home.dart';
+import 'src/pages/scanItem.dart';
 import 'src/pages/addItem.dart';
 import 'src/pages/itemDetails.dart';
 
@@ -46,9 +47,13 @@ class App extends StatelessWidget {
                     items: appState.items,
                     clearItems: appState.clearItems),
               ),
+          '/scan': (context) => Consumer<ApplicationState>(
+                builder: (context, appState, _) =>
+                    ScanItemPage(title: 'Add item: Scan'),
+              ),
           '/add': (context) => Consumer<ApplicationState>(
                 builder: (context, appState, _) => AddItemPage(
-                  title: 'Add item',
+                  title: 'Add item: Enter details',
                   saveItem: appState.saveItem,
                 ),
               ),

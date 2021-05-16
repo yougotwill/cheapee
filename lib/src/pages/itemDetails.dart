@@ -42,6 +42,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
               saveItem: widget.saveItem,
               item: args.item,
               canEdit: args.canEdit,
+              barcode: null,
             ),
           ],
         ),

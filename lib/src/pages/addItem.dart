@@ -1,9 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:barcode_scan2/barcode_scan2.dart';
 
 import '../widgets/header.dart';
 import '../widgets/itemForm.dart';
+
+class AddItemPageArguments {
+  final String? barcode;
+  AddItemPageArguments(this.barcode);
+}
 
 class AddItemPage extends StatefulWidget {
   AddItemPage({Key? key, required this.title, required this.saveItem})
@@ -27,11 +31,10 @@ class AddItemPage extends StatefulWidget {
 }
 
 class _AddItemPageState extends State<AddItemPage> {
-  // void _scanItem() async {
-  // }
-
   @override
   Widget build(BuildContext context) {
+    final args =
+        ModalRoute.of(context)!.settings.arguments as AddItemPageArguments;
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -40,29 +43,12 @@ class _AddItemPageState extends State<AddItemPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Header('Scan a barcode'),
-            ElevatedButton(
-              onPressed: () async {
-                var result = await BarcodeScanner.scan();
-                print(result
-                    .type); // The result type (barcode, cancelled, failed)
-                print(result.rawContent); // The barcode content
-                print(result.format); // The barcode format (as enum)
-                print(result
-                    .formatNote); // If a unknown format was scanned this field contains a note
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content:
-                      Text('Scanned: ${result.type}, ${result.rawContent}'),
-                  backgroundColor: Colors.indigo,
-                ));
-              },
-              child: Text("Let's go!"),
-            ),
             Header("Item Details"),
             ItemForm(
               saveItem: widget.saveItem,
               item: null,
               canEdit: true,
+              barcode: args.barcode,
             ),
           ],
         ),
