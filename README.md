@@ -1,5 +1,7 @@
 # cheapee
 
+<img src="icon.png" alt="icon" width="256" height="256" />
+
 A Flutter project built for the ThinkNinjas Tech Challenge.
 
 Get the best deal when you are shopping by comparing item details to get the best bang for your buck!
@@ -13,6 +15,8 @@ Get the best deal when you are shopping by comparing item details to get the bes
 ## Development
 
 This project is a Flutter application.
+
+This project was built and tested on iOS using XCode and an iPhone 7.
 
 A few resources to get you started if this is your first Flutter project:
 
