@@ -17,9 +17,9 @@ class Item {
   final String category;
   final String barcode;
   final String name;
-  final String units;
+  final double units;
   final String uom;
-  final String price;
+  final double price;
   final String rpu;
 }
 
@@ -39,7 +39,7 @@ class _ItemListState extends State<ItemList> {
       rows.add(new DataRow(
         cells: <DataCell>[
           DataCell(Text(item.name)),
-          DataCell(Text(item.units)),
+          DataCell(Text(item.units.toString())),
           DataCell(Text(item.rpu)),
         ],
         onSelectChanged: (value) => {

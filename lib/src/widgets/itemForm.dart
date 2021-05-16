@@ -115,9 +115,9 @@ class ItemFormState extends State<ItemForm> {
     categoryValue = this.widget.item?.category ?? 'cheese';
     uomValue = this.widget.item?.uom ?? 'g';
     _loadBarcode(this.widget);
-    textUnitsController.text = this.widget.item?.units ?? '';
+    textUnitsController.text = this.widget.item?.units.toString() ?? '';
     textNameController.text = this.widget.item?.name ?? '';
-    textPriceController.text = this.widget.item?.price ?? '';
+    textPriceController.text = this.widget.item?.price.toString() ?? '';
   }
 
   @override
@@ -145,7 +145,10 @@ class ItemFormState extends State<ItemForm> {
                   return 'Cannot be empty';
                 }
                 if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
-                  return 'Only digits are valid';
+                  return 'Can only be numbers';
+                }
+                if (value.length != 13) {
+                  return 'Must be 13 digits';
                 }
                 return null;
               },
@@ -207,7 +210,10 @@ class ItemFormState extends State<ItemForm> {
                   return 'Cannot be empty';
                 }
                 if (!RegExp(r'^\d*\.?\d+$').hasMatch(value)) {
-                  return 'Only decimals are valid';
+                  return 'Must be decimal';
+                }
+                if (double.parse(value) <= 0.0) {
+                  return 'Cannot be 0 or negative';
                 }
                 return null;
               },
@@ -255,8 +261,12 @@ class ItemFormState extends State<ItemForm> {
                 if (value == null || value.isEmpty) {
                   return 'Cannot be empty';
                 }
-                if (!RegExp(r'^\d*\.?\d+$').hasMatch(value)) {
-                  return 'Only decimals are valid';
+                if (!RegExp(r'^(?!^0\.00$)(([1-9][\d]{0,6})|([0]))\.[\d]{2}$')
+                    .hasMatch(value)) {
+                  return 'Must be 2 decimal point number';
+                }
+                if (double.parse(value) < 0.0) {
+                  return 'Cannot be negative';
                 }
                 return null;
               },

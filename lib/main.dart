@@ -107,17 +107,15 @@ class ApplicationState extends ChangeNotifier {
   // methods
   Future<void> saveItem(String category, String barcode, String name,
       String units, String uom, String price) {
-    // TODO checks shouldn't be needed because form verfies everything?
-    // TODO Separate check for existing elements
     // calculate R per UoM (rpu)
     return FirebaseFirestore.instance.collection('items').doc(barcode).set({
       'category': category,
       'barcode': barcode,
       'name': name,
-      'units': units,
+      'units': double.parse(units),
       'uom': uom,
-      'price': price,
-      'rpu': '0.0',
+      'price': double.parse(price),
+      'rpu': 'R1.0 / g',
     });
   }
 
