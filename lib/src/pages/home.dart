@@ -1,77 +1,51 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../widgets/header.dart';
-import '../widgets/paragraph.dart';
+import '../widgets/itemList.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
+  HomePage(
+      {Key? key,
+      required this.title,
+      required this.items,
+      required this.clearItems})
+      : super(key: key);
 
   final String title;
+  final List<Item> items;
+  final FutureOr<void> Function() clearItems;
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  void _showAddItemPage() {
-    Navigator.of(context).pushNamed('/add');
+  void _showScanItemPage() {
+    Navigator.of(context).pushNamed('/scan');
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
+            SizedBox(width: 16.0, height: 16.0),
             Header("Let's get the best deal!"),
-            Paragraph(
-              'Add some items by tapping the button below.',
-            ),
+            ItemList(items: widget.items, clearItems: widget.clearItems),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _showAddItemPage,
+        onPressed: _showScanItemPage,
         tooltip: 'Add Item',
         child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
     );
   }
 }

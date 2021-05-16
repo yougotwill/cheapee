@@ -1,10 +1,22 @@
 # cheapee
 
-A new Flutter project.
+<img src="icon.png" alt="icon" width="256" height="256" />
 
-## Getting Started
+A Flutter project built for the ThinkNinjas Tech Challenge.
 
-This project is a starting point for a Flutter application.
+Get the best deal when you are shopping by comparing item details to get the best bang for your buck!
+
+## Features
+
+- Barcode scanning
+- Add shopping items easily via a quick form.
+- See details about various items you have added to make an informed decision.
+
+## Development
+
+This project is a Flutter application.
+
+This project was built and tested on iOS using XCode and an iPhone 7.
 
 A few resources to get you started if this is your first Flutter project:
 

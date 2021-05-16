@@ -4,18 +4,19 @@ import 'package:flutter/material.dart';
 import '../widgets/itemForm.dart';
 import '../widgets/itemList.dart' show Item;
 
-class AddItemPageArguments {
-  final String? barcode;
-  AddItemPageArguments(this.barcode);
+class ItemDetailsPageArguments {
+  final Item? item;
+  final bool canEdit;
+  ItemDetailsPageArguments(this.item, this.canEdit);
 }
 
-class AddItemPage extends StatefulWidget {
-  AddItemPage(
-      {Key? key,
-      required this.title,
-      required this.saveItem,
-      required this.isExistingItem})
-      : super(key: key);
+class ItemDetailsPage extends StatefulWidget {
+  ItemDetailsPage({
+    Key? key,
+    required this.title,
+    required this.saveItem,
+    required this.isExistingItem,
+  }) : super(key: key);
 
   final String title;
   final Future<void> Function(String category, String barcode, String name,
@@ -23,14 +24,14 @@ class AddItemPage extends StatefulWidget {
   final Future<Item?> Function(String barcode) isExistingItem;
 
   @override
-  _AddItemPageState createState() => _AddItemPageState();
+  _ItemDetailsPageState createState() => _ItemDetailsPageState();
 }
 
-class _AddItemPageState extends State<AddItemPage> {
+class _ItemDetailsPageState extends State<ItemDetailsPage> {
   @override
   Widget build(BuildContext context) {
     final args =
-        ModalRoute.of(context)!.settings.arguments as AddItemPageArguments;
+        ModalRoute.of(context)!.settings.arguments as ItemDetailsPageArguments;
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -41,9 +42,9 @@ class _AddItemPageState extends State<AddItemPage> {
           children: <Widget>[
             ItemForm(
               saveItem: widget.saveItem,
-              item: null,
-              canEdit: true,
-              barcode: args.barcode,
+              item: args.item,
+              canEdit: args.canEdit,
+              barcode: null,
               isExistingItem: widget.isExistingItem,
             ),
           ],
