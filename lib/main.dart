@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'src/pages/home.dart';
+import 'src/pages/scanItem.dart';
 import 'src/pages/addItem.dart';
 import 'src/pages/itemDetails.dart';
 
@@ -46,16 +47,23 @@ class App extends StatelessWidget {
                     items: appState.items,
                     clearItems: appState.clearItems),
               ),
+          '/scan': (context) => Consumer<ApplicationState>(
+                builder: (context, appState, _) => ScanItemPage(
+                    title: 'Add item: Scan',
+                    isExistingItem: appState.isExistingItem),
+              ),
           '/add': (context) => Consumer<ApplicationState>(
                 builder: (context, appState, _) => AddItemPage(
-                  title: 'Add item',
+                  title: 'Add item: Enter details',
                   saveItem: appState.saveItem,
+                  isExistingItem: appState.isExistingItem,
                 ),
               ),
           '/details': (context) => Consumer<ApplicationState>(
                 builder: (context, appState, _) => ItemDetailsPage(
                   title: 'Item Details',
                   saveItem: appState.saveItem,
+                  isExistingItem: appState.isExistingItem,
                 ),
               ),
         });
@@ -97,12 +105,12 @@ class ApplicationState extends ChangeNotifier {
   List<Item> get items => _items;
 
   // methods
-  Future<DocumentReference> saveItem(String category, String barcode,
-      String name, String units, String uom, String price) {
+  Future<void> saveItem(String category, String barcode, String name,
+      String units, String uom, String price) {
     // TODO checks shouldn't be needed because form verfies everything?
     // TODO Separate check for existing elements
     // calculate R per UoM (rpu)
-    return FirebaseFirestore.instance.collection('items').add({
+    return FirebaseFirestore.instance.collection('items').doc(barcode).set({
       'category': category,
       'barcode': barcode,
       'name': name,
@@ -111,6 +119,27 @@ class ApplicationState extends ChangeNotifier {
       'price': price,
       'rpu': '0.0',
     });
+  }
+
+  Future<Item?> isExistingItem(String barcode) async {
+    final QuerySnapshot result = await FirebaseFirestore.instance
+        .collection('items')
+        .where('barcode', isEqualTo: barcode)
+        .get();
+    final List<DocumentSnapshot> documents = result.docs;
+    if (documents.length == 1) {
+      DocumentSnapshot<Object?> document = documents.single;
+      return new Item(
+        category: document.get('category'),
+        barcode: document.get('barcode'),
+        name: document.get('name'),
+        units: document.get('units'),
+        uom: document.get('uom'),
+        price: document.get('price'),
+        rpu: document.get('rpu'),
+      );
+    }
+    return null;
   }
 
   Future<void> clearItems() {

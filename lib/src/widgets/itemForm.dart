@@ -7,11 +7,15 @@ class ItemForm extends StatefulWidget {
     required this.saveItem,
     required this.item,
     required this.canEdit,
+    required this.barcode,
+    required this.isExistingItem,
   });
-  final FutureOr<void> Function(String category, String barcode, String name,
+  final Future<void> Function(String category, String barcode, String name,
       String units, String uom, String price) saveItem;
   final Item? item;
   final bool canEdit;
+  final String? barcode;
+  final Future<Item?> Function(String barcode) isExistingItem;
 
   @override
   ItemFormState createState() {
@@ -38,13 +42,79 @@ class ItemFormState extends State<ItemForm> {
   final textUnitsController = TextEditingController();
   final textPriceController = TextEditingController();
 
+  void _loadBarcode(widget) {
+    if (widget.barcode != null) {
+      textBarcodeController.text = widget.barcode;
+    } else {
+      textBarcodeController.text = widget.item?.barcode ?? '';
+    }
+  }
+
+  void _saveItem() async {
+    await widget.saveItem(
+        categoryValue,
+        textBarcodeController.text,
+        textNameController.text,
+        textUnitsController.text,
+        uomValue,
+        textPriceController.text);
+    // TODO confirm this happens after the promise resolves
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('Item added'),
+      backgroundColor: Colors.indigo,
+    ));
+    Navigator.of(context).popUntil(ModalRoute.withName('/'));
+  }
+
+  void _cancelSave() {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('Save cancelled'),
+      backgroundColor: Colors.indigo[200],
+    ));
+    Navigator.of(context).pop();
+  }
+
+  Future<void> _showConfirmationDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Warning'),
+          content: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Text('This item already exists.'),
+                Text("Update it's information?"),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Yes'),
+              onPressed: () {
+                _saveItem();
+              },
+            ),
+            TextButton(
+              child: Text('No'),
+              onPressed: () {
+                _cancelSave();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
     // TODO not sure how clean this is
     categoryValue = this.widget.item?.category ?? 'cheese';
     uomValue = this.widget.item?.uom ?? 'g';
-    textBarcodeController.text = this.widget.item?.barcode ?? '';
+    _loadBarcode(this.widget);
     textUnitsController.text = this.widget.item?.units ?? '';
     textNameController.text = this.widget.item?.name ?? '';
     textPriceController.text = this.widget.item?.price ?? '';
@@ -192,23 +262,17 @@ class ItemFormState extends State<ItemForm> {
               },
             ),
           ),
-          if (widget.item == null)
+          if (widget.canEdit || widget.item == null)
             ElevatedButton(
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
-                  await widget.saveItem(
-                      categoryValue,
-                      textBarcodeController.text,
-                      textNameController.text,
-                      textUnitsController.text,
-                      uomValue,
-                      textPriceController.text);
-                  // TODO confirm this happens after the promise resolves
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('Item added'),
-                    backgroundColor: Colors.indigo,
-                  ));
-                  Navigator.pop(context);
+                  Item? existingItem =
+                      await widget.isExistingItem(textBarcodeController.text);
+                  if (existingItem != null) {
+                    _showConfirmationDialog();
+                  } else {
+                    _saveItem();
+                  }
                 }
               },
               child: Text('Save'),

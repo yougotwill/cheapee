@@ -1,4 +1,8 @@
 PODS:
+  - barcode_scan2 (0.0.1):
+    - Flutter
+    - MTBBarcodeScanner
+    - SwiftProtobuf
   - cloud_firestore (2.0.0):
     - Firebase/Firestore (= 7.11.0)
     - firebase_core
@@ -30,14 +34,17 @@ PODS:
     - PromisesObjC (~> 1.2)
   - GoogleUtilities/Logger (7.4.0):
     - GoogleUtilities/Environment
+  - MTBBarcodeScanner (5.0.11)
   - nanopb (2.30908.0):
     - nanopb/decode (= 2.30908.0)
     - nanopb/encode (= 2.30908.0)
   - nanopb/decode (2.30908.0)
   - nanopb/encode (2.30908.0)
   - PromisesObjC (1.2.12)
+  - SwiftProtobuf (1.17.0)
 
 DEPENDENCIES:
+  - barcode_scan2 (from `.symlinks/plugins/barcode_scan2/ios`)
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - FirebaseFirestore (from `https://github.com/invertase/firestore-ios-sdk-frameworks.git`, tag `7.11.0`)
@@ -50,10 +57,14 @@ SPEC REPOS:
     - FirebaseCoreDiagnostics
     - GoogleDataTransport
     - GoogleUtilities
+    - MTBBarcodeScanner
     - nanopb
     - PromisesObjC
+    - SwiftProtobuf
 
 EXTERNAL SOURCES:
+  barcode_scan2:
+    :path: ".symlinks/plugins/barcode_scan2/ios"
   cloud_firestore:
     :path: ".symlinks/plugins/cloud_firestore/ios"
   firebase_core:
@@ -70,6 +81,7 @@ CHECKOUT OPTIONS:
     :tag: 7.11.0
 
 SPEC CHECKSUMS:
+  barcode_scan2: 0af2bb63c81b4565aab6cd78278e4c0fa136dbb0
   cloud_firestore: 01f3fc4bb5c46b400a329320ea7f61a73817a657
   Firebase: c121feb35e4126c0b355e3313fa9b487d47319fd
   firebase_core: 84dcd80ac6d29c3d1039071b7306ee99688eb9c7
@@ -79,8 +91,10 @@ SPEC CHECKSUMS:
   Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
   GoogleDataTransport: cd9db2180fcecd8da1b561aea31e3e56cf834aa7
   GoogleUtilities: 284cddc7fffc14ae1907efb6f78ab95c1fccaedc
+  MTBBarcodeScanner: f453b33c4b7dfe545d8c6484ed744d55671788cb
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
+  SwiftProtobuf: 9c85136c6ba74b0a1b84279dbf0f6db8efb714e0
 
 PODFILE CHECKSUM: 38da0e3062e6dbfc3d6c7de67643b84043381a65
 

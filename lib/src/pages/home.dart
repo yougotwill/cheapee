@@ -30,8 +30,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  void _showAddItemPage() {
-    Navigator.of(context).pushNamed('/add');
+  void _showScanItemPage() {
+    Navigator.of(context).pushNamed('/scan');
   }
 
   @override
@@ -74,7 +74,7 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _showAddItemPage,
+        onPressed: _showScanItemPage,
         tooltip: 'Add Item',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.

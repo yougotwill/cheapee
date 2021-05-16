@@ -3,9 +3,19 @@ import 'package:flutter/material.dart';
 
 import '../widgets/header.dart';
 import '../widgets/itemForm.dart';
+import '../widgets/itemList.dart' show Item;
+
+class AddItemPageArguments {
+  final String? barcode;
+  AddItemPageArguments(this.barcode);
+}
 
 class AddItemPage extends StatefulWidget {
-  AddItemPage({Key? key, required this.title, required this.saveItem})
+  AddItemPage(
+      {Key? key,
+      required this.title,
+      required this.saveItem,
+      required this.isExistingItem})
       : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -18,20 +28,19 @@ class AddItemPage extends StatefulWidget {
   // always marked "final".
 
   final String title;
-  final FutureOr<void> Function(String category, String barcode, String name,
+  final Future<void> Function(String category, String barcode, String name,
       String units, String uom, String price) saveItem;
+  final Future<Item?> Function(String barcode) isExistingItem;
 
   @override
   _AddItemPageState createState() => _AddItemPageState();
 }
 
 class _AddItemPageState extends State<AddItemPage> {
-  void _scanItem() {
-    // use package here to scan and store barcode
-  }
-
   @override
   Widget build(BuildContext context) {
+    final args =
+        ModalRoute.of(context)!.settings.arguments as AddItemPageArguments;
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -40,16 +49,13 @@ class _AddItemPageState extends State<AddItemPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Header('Scan a barcode'),
-            ElevatedButton(
-              onPressed: _scanItem,
-              child: Text("Let's go!"),
-            ),
             Header("Item Details"),
             ItemForm(
               saveItem: widget.saveItem,
               item: null,
               canEdit: true,
+              barcode: args.barcode,
+              isExistingItem: widget.isExistingItem,
             ),
           ],
         ),

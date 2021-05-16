@@ -5,7 +5,7 @@ import 'package:cheapee/src/widgets/itemList.dart' show Item;
 import '../widgets/itemForm.dart';
 
 class ItemDetailsPageArguments {
-  final Item item;
+  final Item? item;
   final bool canEdit;
   ItemDetailsPageArguments(this.item, this.canEdit);
 }
@@ -15,11 +15,13 @@ class ItemDetailsPage extends StatefulWidget {
     Key? key,
     required this.title,
     required this.saveItem,
+    required this.isExistingItem,
   }) : super(key: key);
 
   final String title;
-  final FutureOr<void> Function(String category, String barcode, String name,
+  final Future<void> Function(String category, String barcode, String name,
       String units, String uom, String price) saveItem;
+  final Future<Item?> Function(String barcode) isExistingItem;
 
   @override
   _ItemDetailsPageState createState() => _ItemDetailsPageState();
@@ -42,6 +44,8 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
               saveItem: widget.saveItem,
               item: args.item,
               canEdit: args.canEdit,
+              barcode: null,
+              isExistingItem: widget.isExistingItem,
             ),
           ],
         ),
