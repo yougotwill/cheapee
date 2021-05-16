@@ -30,7 +30,7 @@ class _ScanItemPageState extends State<ScanItemPage> {
             content: SingleChildScrollView(
               child: Column(
                 children: <Widget>[
-                  Text('This item has been scanned before.'),
+                  Text('Item has been scanned before.'),
                   Text("Update it's information?"),
                 ],
               ),

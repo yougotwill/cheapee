@@ -1,9 +1,9 @@
 import 'dart:async';
-import 'package:cheapee/src/widgets/itemList.dart' show Item;
 import 'package:flutter/material.dart';
 
 import '../widgets/header.dart';
 import '../widgets/itemForm.dart';
+import '../widgets/itemList.dart' show Item;
 
 class AddItemPageArguments {
   final String? barcode;
