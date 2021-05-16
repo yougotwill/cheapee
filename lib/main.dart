@@ -49,19 +49,19 @@ class App extends StatelessWidget {
               ),
           '/scan': (context) => Consumer<ApplicationState>(
                 builder: (context, appState, _) => ScanItemPage(
-                    title: 'Add item: Scan',
+                    title: 'Add Barcode',
                     isExistingItem: appState.isExistingItem),
               ),
           '/add': (context) => Consumer<ApplicationState>(
                 builder: (context, appState, _) => AddItemPage(
-                  title: 'Add item: Enter details',
+                  title: 'Add Details',
                   saveItem: appState.saveItem,
                   isExistingItem: appState.isExistingItem,
                 ),
               ),
           '/details': (context) => Consumer<ApplicationState>(
                 builder: (context, appState, _) => ItemDetailsPage(
-                  title: 'Item Details',
+                  title: 'View Details',
                   saveItem: appState.saveItem,
                   isExistingItem: appState.isExistingItem,
                 ),

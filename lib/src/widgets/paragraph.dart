@@ -5,7 +5,7 @@ class Paragraph extends StatelessWidget {
   final String content;
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         child: Text(
           content,
           style: TextStyle(fontSize: 18),

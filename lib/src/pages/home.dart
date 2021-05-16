@@ -68,6 +68,10 @@ class _HomePageState extends State<HomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
+            SizedBox(
+              width: 16.0,
+              height: 16.0,
+            ),
             Header("Let's get the best deal!"),
             ItemList(items: widget.items, clearItems: widget.clearItems),
           ],

@@ -1,3 +1,4 @@
+import 'package:cheapee/src/widgets/paragraph.dart';
 import 'package:flutter/material.dart';
 import 'package:barcode_scan2/barcode_scan2.dart';
 
@@ -48,6 +49,10 @@ class _ScanItemPageState extends State<ScanItemPage> {
                 child: Text('No'),
                 onPressed: () {
                   Navigator.of(context).popUntil(ModalRoute.withName('/'));
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Scan cancelled.'),
+                    backgroundColor: Colors.indigo[200],
+                  ));
                 },
               ),
             ],
@@ -63,27 +68,58 @@ class _ScanItemPageState extends State<ScanItemPage> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Header('Scan a barcode'),
+            SizedBox(
+              width: 16.0,
+              height: 16.0,
+            ),
+            Header('Barcode Scanner'),
+            Paragraph("Scan a barcode with your camera!"),
+            Paragraph("Automatically enter your item's barcode."),
+            SizedBox(
+              width: 8.0,
+              height: 8.0,
+            ),
             ElevatedButton(
               onPressed: () async {
                 var result = await BarcodeScanner.scan();
-                if (result.type == ResultType.Cancelled ||
-                    result.type == ResultType.Error ||
-                    result.format == BarcodeFormat.unknown) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('Scan failed. Please try again.'),
-                    backgroundColor: Colors.red,
-                  ));
-                } else {
+                if (result.type == ResultType.Barcode) {
                   Item? existingItem =
                       await widget.isExistingItem(result.rawContent);
-                  _showConfirmationDialog(result.rawContent, existingItem);
+                  if (existingItem != null) {
+                    _showConfirmationDialog(result.rawContent, existingItem);
+                  } else {
+                    Navigator.pushNamed(context, '/add',
+                        arguments: AddItemPageArguments(result.rawContent));
+                  }
+                } else {
+                  if (result.type == ResultType.Error) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text('Scan failed. Please try again.'),
+                      backgroundColor: Colors.red[100],
+                    ));
+                  }
+                  if (result.type == ResultType.Cancelled) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text('Scan cancelled.'),
+                      backgroundColor: Colors.indigo[200],
+                    ));
+                  }
                 }
               },
               child: Text("Let's go!"),
             ),
-            Header('Enter the barcode manually'),
+            SizedBox(
+              width: 32.0,
+              height: 32.0,
+            ),
+            Header('Manual Entry'),
+            Paragraph("Manually enter the item's barcode."),
+            SizedBox(
+              width: 8.0,
+              height: 8.0,
+            ),
             ElevatedButton(
               onPressed: () {
                 Navigator.pushNamed(context, '/add',

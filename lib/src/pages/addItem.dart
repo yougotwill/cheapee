@@ -49,7 +49,6 @@ class _AddItemPageState extends State<AddItemPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Header("Item Details"),
             ItemForm(
               saveItem: widget.saveItem,
               item: null,

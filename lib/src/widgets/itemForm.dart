@@ -75,7 +75,7 @@ class ItemFormState extends State<ItemForm> {
     );
     // TODO confirm this happens after the promise resolves
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text('Item added'),
+      content: Text('Added Item'),
       backgroundColor: Colors.indigo,
     ));
     Navigator.of(context).popUntil(ModalRoute.withName('/'));
@@ -83,7 +83,7 @@ class ItemFormState extends State<ItemForm> {
 
   void _cancelSave() {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text('Save cancelled'),
+      content: Text('Update cancelled'),
       backgroundColor: Colors.indigo[200],
     ));
     Navigator.of(context).pop();
@@ -99,7 +99,7 @@ class ItemFormState extends State<ItemForm> {
           content: SingleChildScrollView(
             child: Column(
               children: <Widget>[
-                Text('This item already exists.'),
+                Text('Editing an existing item.'),
                 Text("Update it's information?"),
               ],
             ),
@@ -272,6 +272,10 @@ class ItemFormState extends State<ItemForm> {
                 return null;
               },
             ),
+          ),
+          SizedBox(
+            width: 16.0,
+            height: 16.0,
           ),
           if (widget.canEdit || widget.item == null)
             ElevatedButton(

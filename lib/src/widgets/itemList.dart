@@ -39,14 +39,14 @@ class _ItemListState extends State<ItemList> {
       rows.add(new DataRow(
         cells: <DataCell>[
           DataCell(Text(item.name)),
-          DataCell(Text(item.units.toString())),
+          DataCell(Text(item.units)),
           DataCell(Text(item.rpu)),
         ],
         onSelectChanged: (value) => {
           showDialog(
               context: context,
               builder: (_) => SimpleDialog(
-                    title: const Text('Actions'),
+                    title: const Text('Item Actions'),
                     children: <Widget>[
                       SimpleDialogOption(
                         onPressed: () {
@@ -55,7 +55,7 @@ class _ItemListState extends State<ItemList> {
                               arguments: ItemDetailsPageArguments(item, false));
                         },
                         child: const IconAndDetail(
-                            Icons.info_outline, 'More information'),
+                            Icons.info_outline, 'View Details'),
                       ),
                       SimpleDialogOption(
                         onPressed: () async {
@@ -83,9 +83,13 @@ class _ItemListState extends State<ItemList> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
-        Paragraph(
-            '${widget.items.length > 0 ? 'Looking at: ${widget.items[0].category}' : 'Add items by tapping the bottom button.'}'),
-        if (widget.items.length > 0)
+        if (widget.items.length > 0) ...[
+          SizedBox(
+            width: 16.0,
+            height: 16.0,
+          ),
+          Paragraph(
+              'You are shopping for: ${widget.items[0].category[0].toUpperCase()}${widget.items[0].category.substring(1)}'),
           DataTable(
             showCheckboxColumn: false,
             columns: const <DataColumn>[
@@ -113,6 +117,27 @@ class _ItemListState extends State<ItemList> {
             ],
             rows: _getRows(widget.items),
           ),
+        ],
+        if (widget.items.length == 0)
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: 16.0,
+                height: 16.0,
+              ),
+              Paragraph('Step 1: Add some items to Cheapee.'),
+              Paragraph("Step 2: Check each item's details."),
+              Paragraph('Step 3: Choose the best deal.'),
+              Paragraph("Step 4: Profit"),
+              SizedBox(
+                width: 16.0,
+                height: 16.0,
+              ),
+              Paragraph('Add items by tapping the plus button.'),
+            ],
+          )
       ],
     );
   }
